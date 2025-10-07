@@ -110,6 +110,11 @@ const Candidates = () => {
       
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
+          <div className="mb-4">
+            <Badge variant="outline" className="text-lg px-4 py-2 mb-4">
+              Mother Teresa Bhavan, SVNIT
+            </Badge>
+          </div>
           <h1 className="text-4xl font-bold mb-4">
             Meet the <span className="bg-[var(--gradient-primary)] bg-clip-text">Candidates</span>
           </h1>

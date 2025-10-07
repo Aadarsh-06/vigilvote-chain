@@ -51,7 +51,7 @@ const Landing = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-20">
         <h2 className="text-4xl font-bold text-center mb-12">
-          Why Choose <span className="bg-[var(--gradient-primary)] bg-clip-text">SecureVote</span>?
+          Why Choose <span className="bg-[var(--gradient-primary)] bg-clip-text">VoteSphere</span>?
         </h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -94,7 +94,7 @@ const Landing = () => {
         <div className="bg-[var(--gradient-hero)] rounded-3xl p-12 text-center border border-primary/20">
           <h2 className="text-4xl font-bold mb-4">Ready to Make Your Voice Heard?</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of voters who trust SecureVote for safe, transparent elections
+            Join thousands of voters who trust VoteSphere for safe, transparent elections
           </p>
           <Link to="/auth">
             <Button size="lg" variant="hero" className="text-lg px-12">
@@ -107,7 +107,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>© 2025 SecureVote. Building trust in digital democracy.</p>
+          <p>© 2025 VoteSphere. Building trust in digital democracy.</p>
         </div>
       </footer>
     </div>

@@ -30,7 +30,7 @@ export const Navbar = ({ user, isAdmin }: NavbarProps) => {
           <Link to="/" className="flex items-center gap-2 group">
             <Shield className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold bg-[var(--gradient-primary)] bg-clip-text text-transparent">
-              SecureVote
+              VoteSphere
             </span>
           </Link>
           
