@@ -130,7 +130,7 @@ const Vote = () => {
         <div className="text-center mb-8">
           <VoteIcon className="h-16 w-16 mx-auto mb-4 text-primary" />
           <h1 className="text-4xl font-bold mb-4">
-            Cast Your <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">Vote</span>
+            Cast Your <span className="bg-[var(--gradient-primary)] bg-clip-text">Vote</span>
           </h1>
           <p className="text-muted-foreground">
             Select your preferred candidate and confirm your choice

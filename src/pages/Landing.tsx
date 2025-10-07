@@ -15,7 +15,7 @@ const Landing = () => {
           <div className="space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Secure, Transparent{" "}
-              <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">
+              <span className="bg-[var(--gradient-primary)] bg-clip-text ">
                 Digital Voting
               </span>
             </h1>
@@ -51,7 +51,7 @@ const Landing = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-20">
         <h2 className="text-4xl font-bold text-center mb-12">
-          Why Choose <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">SecureVote</span>?
+          Why Choose <span className="bg-[var(--gradient-primary)] bg-clip-text">SecureVote</span>?
         </h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

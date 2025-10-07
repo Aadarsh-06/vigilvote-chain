@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, UserCog, BarChart3 } from "lucide-react";
+import { Loader2, Plus, UserCog, BarChart3, RefreshCw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 interface Candidate {
   id: string;
@@ -26,6 +27,8 @@ const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [voteStats, setVoteStats] = useState<any[]>([]);
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [newCandidate, setNewCandidate] = useState({
     name: "",
     party: "",
@@ -58,6 +61,22 @@ const Admin = () => {
     };
 
     checkAdmin();
+    
+    // Set up real-time subscription for vote updates
+    const votesSubscription = supabase
+      .channel('votes-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'votes'
+      }, () => {
+        fetchData(); // Refresh data when new vote is cast
+      })
+      .subscribe();
+
+    return () => {
+      votesSubscription.unsubscribe();
+    };
   }, [navigate]);
 
   const fetchData = async () => {
@@ -93,7 +112,9 @@ const Admin = () => {
         return acc;
       }, {});
       
-      setVoteStats(Object.values(stats));
+      const statsArray = Object.values(stats) as any[];
+      setVoteStats(statsArray);
+      setTotalVotes(votesData.length);
     }
 
     setLoading(false);
@@ -119,6 +140,13 @@ const Admin = () => {
     }
   };
 
+  const handleRefreshStats = async () => {
+    setIsRefreshing(true);
+    await fetchData();
+    setIsRefreshing(false);
+    toast.success("Vote statistics refreshed");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -135,7 +163,7 @@ const Admin = () => {
         <div className="text-center mb-8">
           <UserCog className="h-16 w-16 mx-auto mb-4 text-primary" />
           <h1 className="text-4xl font-bold mb-2">
-            Admin <span className="bg-[var(--gradient-primary)] bg-clip-text text-transparent">Dashboard</span>
+            Admin <span className="bg-[var(--gradient-primary)] bg-clip-text">Dashboard</span>
           </h1>
           <p className="text-muted-foreground">Manage candidates and view election statistics</p>
         </div>
@@ -241,13 +269,30 @@ const Admin = () => {
           <TabsContent value="stats">
             <Card className="shadow-[var(--shadow-card)]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Vote Statistics
-                </CardTitle>
-                <CardDescription>
-                  Real-time voting statistics (encrypted data)
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="h-5 w-5" />
+                      Vote Statistics
+                    </CardTitle>
+                    <CardDescription>
+                      Real-time voting statistics (encrypted data)
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-lg px-3 py-1">
+                      Total: {totalVotes}
+                    </Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRefreshStats}
+                      disabled={isRefreshing}
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 {voteStats.length === 0 ? (

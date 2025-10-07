@@ -9,6 +9,8 @@ import Candidates from "./pages/Candidates";
 import Vote from "./pages/Vote";
 import Confirmation from "./pages/Confirmation";
 import Admin from "./pages/Admin";
+import Verification from "./pages/Verification";
+import VoteIntegrity from "./pages/VoteIntegrity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/vote" element={<Vote />} />
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/verification" element={<Verification />} />
+          <Route path="/vote-integrity" element={<VoteIntegrity />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
