@@ -12,22 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface VerificationStatus {
-  user_id: string;
-  aadhaar_number: string | null;
-  phone_verified: boolean;
-  face_verified: boolean;
-  otp_verified: boolean;
-  verification_status: 'pending' | 'verified' | 'rejected';
-  verification_attempts: number;
-  last_verification_attempt: string | null;
-}
-
 const Verification = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus | null>(null);
+  const [user, setUser] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState(null);
   const [aadhaarNumber, setAadhaarNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -43,7 +32,6 @@ const Verification = () => {
       }
       setUser(session.user);
 
-      // Fetch verification status
       const { data: verificationData } = await supabase
         .from("voter_verification")
         .select("*")
@@ -55,7 +43,6 @@ const Verification = () => {
         setAadhaarNumber(verificationData.aadhaar_number || "");
       }
 
-      // Get phone number from profile
       const { data: profileData } = await supabase
         .from("profiles")
         .select("phone_number")
@@ -72,7 +59,7 @@ const Verification = () => {
     fetchVerificationStatus();
   }, [navigate]);
 
-  const handleAadhaarSubmit = async (e: React.FormEvent) => {
+  const handleAadhaarSubmit = async (e) => {
     e.preventDefault();
     if (!aadhaarNumber || aadhaarNumber.length !== 12) {
       toast.error("Please enter a valid 12-digit Aadhaar number");
@@ -94,7 +81,6 @@ const Verification = () => {
 
       toast.success("Aadhaar number submitted for verification");
       
-      // Refresh verification status
       const { data: updatedData } = await supabase
         .from("voter_verification")
         .select("*")
@@ -104,7 +90,7 @@ const Verification = () => {
       if (updatedData) {
         setVerificationStatus(updatedData);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to submit Aadhaar number");
     } finally {
       setSubmitting(false);
@@ -119,17 +105,13 @@ const Verification = () => {
 
     setSubmitting(true);
     try {
-      // In a real application, you would send OTP via SMS service
-      // For demo purposes, we'll simulate OTP sending
       const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // Store the OTP in localStorage for demo (in production, use secure backend)
       localStorage.setItem(`otp_${user.id}`, mockOtp);
       localStorage.setItem(`otp_timestamp_${user.id}`, Date.now().toString());
       
       setOtpSent(true);
       toast.success(`OTP sent to ${phoneNumber}. Demo OTP: ${mockOtp}`);
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to send OTP");
     } finally {
       setSubmitting(false);
@@ -144,7 +126,6 @@ const Verification = () => {
 
     setSubmitting(true);
     try {
-      // Verify OTP (demo implementation)
       const storedOtp = localStorage.getItem(`otp_${user.id}`);
       const otpTimestamp = localStorage.getItem(`otp_timestamp_${user.id}`);
       
@@ -161,7 +142,6 @@ const Verification = () => {
         return;
       }
 
-      // Update verification status
       const { error } = await supabase
         .from("voter_verification")
         .update({
@@ -172,13 +152,11 @@ const Verification = () => {
 
       if (error) throw error;
 
-      // Clean up OTP
       localStorage.removeItem(`otp_${user.id}`);
       localStorage.removeItem(`otp_timestamp_${user.id}`);
 
       toast.success("Phone number verified successfully!");
       
-      // Refresh verification status
       const { data: updatedData } = await supabase
         .from("voter_verification")
         .select("*")
@@ -191,20 +169,20 @@ const Verification = () => {
       
       setOtpSent(false);
       setOtp("");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to verify OTP");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const getStatusIcon = (verified: boolean, pending?: boolean) => {
+  const getStatusIcon = (verified, pending) => {
     if (verified) return <CheckCircle className="h-5 w-5 text-accent" />;
     if (pending) return <Clock className="h-5 w-5 text-yellow-500" />;
     return <XCircle className="h-5 w-5 text-muted-foreground" />;
   };
 
-  const getStatusBadge = (status: 'pending' | 'verified' | 'rejected') => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case 'verified':
         return <Badge className="bg-accent/10 text-accent">Verified</Badge>;
@@ -239,7 +217,6 @@ const Verification = () => {
         </div>
 
         <div className="grid gap-6">
-          {/* Verification Status Overview */}
           <Card className="shadow-[var(--shadow-card)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -300,7 +277,6 @@ const Verification = () => {
             </CardContent>
           </Card>
 
-          {/* Verification Forms */}
           <Tabs defaultValue="aadhaar" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="aadhaar">Aadhaar Verification</TabsTrigger>
@@ -447,7 +423,6 @@ const Verification = () => {
             </TabsContent>
           </Tabs>
 
-          {/* Voting Eligibility */}
           <Card className="shadow-[var(--shadow-card)]">
             <CardHeader>
               <CardTitle>Voting Eligibility</CardTitle>
@@ -485,3 +460,5 @@ const Verification = () => {
 };
 
 export default Verification;
+
+

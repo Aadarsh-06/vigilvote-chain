@@ -5,12 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-interface NavbarProps {
-  user?: any;
-  isAdmin?: boolean;
-}
-
-export const Navbar = ({ user, isAdmin }: NavbarProps) => {
+export const Navbar = ({ user, isAdmin }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -83,3 +78,5 @@ export const Navbar = ({ user, isAdmin }: NavbarProps) => {
     </nav>
   );
 };
+
+

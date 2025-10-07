@@ -10,22 +10,13 @@ import { Search, CheckCircle, XCircle, Hash, Calendar, User, Vote as VoteIcon } 
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-interface VoteVerificationResult {
-  id: string;
-  vote_hash: string;
-  cast_at: string;
-  is_valid: boolean;
-  candidate_name?: string;
-  candidate_party?: string;
-}
-
 const VoteIntegrity = () => {
   const [voteHash, setVoteHash] = useState("");
   const [searching, setSearching] = useState(false);
-  const [verificationResult, setVerificationResult] = useState<VoteVerificationResult | null>(null);
+  const [verificationResult, setVerificationResult] = useState(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
 
-  const verifyVoteIntegrity = async (e: React.FormEvent) => {
+  const verifyVoteIntegrity = async (e) => {
     e.preventDefault();
     if (!voteHash.trim()) {
       toast.error("Please enter a vote hash");
@@ -37,7 +28,6 @@ const VoteIntegrity = () => {
     setVerificationResult(null);
 
     try {
-      // Search for the vote by hash
       const { data: voteData, error } = await supabase
         .from("votes")
         .select(`
@@ -64,8 +54,7 @@ const VoteIntegrity = () => {
         return;
       }
 
-      // Verify the hash integrity
-      const voteString = atob(voteData.encrypted_vote); // Decode the base64 encoded vote
+      const voteString = atob(voteData.encrypted_vote);
       const encoder = new TextEncoder();
       const data = encoder.encode(voteString);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -88,7 +77,7 @@ const VoteIntegrity = () => {
       } else {
         toast.error("Vote integrity verification failed!");
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to verify vote integrity");
       console.error("Vote verification error:", error);
     } finally {
@@ -97,12 +86,11 @@ const VoteIntegrity = () => {
   };
 
   const generateSampleHash = () => {
-    // Generate a sample hash for demo purposes
     const sampleString = `sample-vote-${Date.now()}`;
     crypto.subtle.digest("SHA-256", new TextEncoder().encode(sampleString)).then(hashBuffer => {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-      setVoteHash(hash.substring(0, 32)); // Use first 32 characters for demo
+      setVoteHash(hash.substring(0, 32));
       toast.info("Sample hash generated for testing");
     });
   };
@@ -123,7 +111,6 @@ const VoteIntegrity = () => {
         </div>
 
         <div className="grid gap-6">
-          {/* Search Form */}
           <Card className="shadow-[var(--shadow-card)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -179,7 +166,6 @@ const VoteIntegrity = () => {
             </CardContent>
           </Card>
 
-          {/* Verification Results */}
           {searchAttempted && verificationResult && (
             <Card className="shadow-[var(--shadow-card)]">
               <CardHeader>
@@ -258,7 +244,6 @@ const VoteIntegrity = () => {
             </Card>
           )}
 
-          {/* Information Card */}
           <Card className="shadow-[var(--shadow-card)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -319,3 +304,5 @@ const VoteIntegrity = () => {
 };
 
 export default VoteIntegrity;
+
+

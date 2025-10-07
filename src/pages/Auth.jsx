@@ -28,7 +28,7 @@ const Auth = () => {
     checkUser();
   }, [navigate]);
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     if (!email || !password || !fullName) {
       toast.error("Please fill in all required fields");
@@ -57,7 +57,7 @@ const Auth = () => {
     }
   };
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please fill in all fields");
@@ -204,3 +204,5 @@ const Auth = () => {
 };
 
 export default Auth;
+
+

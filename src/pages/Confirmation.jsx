@@ -11,8 +11,8 @@ import { Badge } from "@/components/ui/badge";
 const Confirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<any>(null);
-  const [voteDetails, setVoteDetails] = useState<any>(null);
+  const [user, setUser] = useState(null);
+  const [voteDetails, setVoteDetails] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +24,6 @@ const Confirmation = () => {
       }
       setUser(session.user);
 
-      // Fetch the user's vote details
       const { data: voteData } = await supabase
         .from("votes")
         .select(`
@@ -45,7 +44,7 @@ const Confirmation = () => {
     fetchVoteDetails();
   }, [navigate]);
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
   };
@@ -216,3 +215,5 @@ Your vote is encrypted and anonymous.
 };
 
 export default Confirmation;
+
+

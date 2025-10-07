@@ -10,20 +10,13 @@ import { toast } from "sonner";
 import { Vote as VoteIcon, Loader2, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-interface Candidate {
-  id: string;
-  name: string;
-  party: string;
-  symbol_url: string | null;
-}
-
 const Vote = () => {
   const navigate = useNavigate();
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [selectedCandidate, setSelectedCandidate] = useState<string>("");
+  const [candidates, setCandidates] = useState([]);
+  const [selectedCandidate, setSelectedCandidate] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkAuthAndVoteStatus = async () => {
@@ -34,7 +27,6 @@ const Vote = () => {
       }
       setUser(session.user);
 
-      // Check if user has already voted
       const { data: voteData } = await supabase
         .from("votes")
         .select("id")
@@ -47,7 +39,6 @@ const Vote = () => {
         return;
       }
 
-      // Fetch candidates
       const { data, error } = await supabase
         .from("candidates")
         .select("id, name, party, symbol_url")
@@ -75,7 +66,6 @@ const Vote = () => {
     setSubmitting(true);
 
     try {
-      // Create a simple hash of the vote (in production, use proper encryption)
       const voteString = `${user.id}-${selectedCandidate}-${Date.now()}`;
       const encoder = new TextEncoder();
       const data = encoder.encode(voteString);
@@ -83,17 +73,15 @@ const Vote = () => {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const voteHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      // Store encrypted vote
       const { error } = await supabase.from("votes").insert({
         voter_id: user.id,
         candidate_id: selectedCandidate,
-        encrypted_vote: btoa(voteString), // Base64 encode (use proper encryption in production)
+        encrypted_vote: btoa(voteString),
         vote_hash: voteHash,
       });
 
       if (error) throw error;
 
-      // Log audit trail
       await supabase.from("audit_logs").insert({
         user_id: user.id,
         action: "VOTE_CAST",
@@ -107,7 +95,7 @@ const Vote = () => {
       });
 
       navigate("/confirmation");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to cast vote");
     } finally {
       setSubmitting(false);
@@ -218,3 +206,5 @@ const Vote = () => {
 };
 
 export default Vote;
+
+

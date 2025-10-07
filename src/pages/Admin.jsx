@@ -12,21 +12,12 @@ import { Loader2, Plus, UserCog, BarChart3, RefreshCw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
-interface Candidate {
-  id: string;
-  name: string;
-  party: string;
-  manifesto: string | null;
-  biography: string | null;
-  is_active: boolean;
-}
-
 const Admin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [voteStats, setVoteStats] = useState<any[]>([]);
+  const [user, setUser] = useState(null);
+  const [candidates, setCandidates] = useState([]);
+  const [voteStats, setVoteStats] = useState([]);
   const [totalVotes, setTotalVotes] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [newCandidate, setNewCandidate] = useState({
@@ -45,7 +36,6 @@ const Admin = () => {
       }
       setUser(session.user);
 
-      // Check if user is admin
       const { data: roles } = await supabase
         .from("user_roles")
         .select("role")
@@ -62,7 +52,6 @@ const Admin = () => {
 
     checkAdmin();
     
-    // Set up real-time subscription for vote updates
     const votesSubscription = supabase
       .channel('votes-changes')
       .on('postgres_changes', {
@@ -70,7 +59,7 @@ const Admin = () => {
         schema: 'public',
         table: 'votes'
       }, () => {
-        fetchData(); // Refresh data when new vote is cast
+        fetchData();
       })
       .subscribe();
 
@@ -80,7 +69,6 @@ const Admin = () => {
   }, [navigate]);
 
   const fetchData = async () => {
-    // Fetch candidates
     const { data: candidatesData } = await supabase
       .from("candidates")
       .select("*")
@@ -90,7 +78,6 @@ const Admin = () => {
       setCandidates(candidatesData);
     }
 
-    // Fetch vote statistics
     const { data: votesData } = await supabase
       .from("votes")
       .select(`
@@ -99,7 +86,7 @@ const Admin = () => {
       `);
     
     if (votesData) {
-      const stats = votesData.reduce((acc: any, vote: any) => {
+      const stats = votesData.reduce((acc, vote) => {
         const candidateId = vote.candidate_id;
         if (!acc[candidateId]) {
           acc[candidateId] = {
@@ -112,7 +99,7 @@ const Admin = () => {
         return acc;
       }, {});
       
-      const statsArray = Object.values(stats) as any[];
+      const statsArray = Object.values(stats);
       setVoteStats(statsArray);
       setTotalVotes(votesData.length);
     }
@@ -120,7 +107,7 @@ const Admin = () => {
     setLoading(false);
   };
 
-  const handleAddCandidate = async (e: React.FormEvent) => {
+  const handleAddCandidate = async (e) => {
     e.preventDefault();
     
     const { error } = await supabase.from("candidates").insert({
@@ -299,7 +286,7 @@ const Admin = () => {
                   <p className="text-center text-muted-foreground py-8">No votes cast yet</p>
                 ) : (
                   <div className="space-y-4">
-                    {voteStats.map((stat: any, index: number) => (
+                    {voteStats.map((stat, index) => (
                       <div key={index} className="p-4 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <div>
@@ -312,7 +299,7 @@ const Admin = () => {
                           <div 
                             className="bg-primary h-2 rounded-full transition-all duration-500"
                             style={{ 
-                              width: `${(stat.count / Math.max(...voteStats.map((s: any) => s.count))) * 100}%` 
+                              width: `${(stat.count / Math.max(...voteStats.map((s) => s.count))) * 100}%` 
                             }}
                           />
                         </div>
@@ -330,3 +317,5 @@ const Admin = () => {
 };
 
 export default Admin;
+
+

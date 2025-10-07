@@ -8,21 +8,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Vote, Loader2 } from "lucide-react";
 
-interface Candidate {
-  id: string;
-  name: string;
-  party: string;
-  symbol_url: string | null;
-  manifesto: string | null;
-  biography: string | null;
-  campaign_video_url: string | null;
-}
-
 const Candidates = () => {
   const navigate = useNavigate();
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -35,7 +25,6 @@ const Candidates = () => {
       }
       setUser(session.user);
 
-      // Check if user is admin
       const { data: roles } = await supabase
         .from("user_roles")
         .select("role")
@@ -45,7 +34,6 @@ const Candidates = () => {
         setIsAdmin(true);
       }
 
-      // Check if user has already voted
       const { data: voteData } = await supabase
         .from("votes")
         .select("id")
@@ -75,7 +63,6 @@ const Candidates = () => {
     checkAuth();
     fetchCandidates();
 
-    // Setup real-time subscription
     const channel = supabase
       .channel("candidates-changes")
       .on(
@@ -193,3 +180,5 @@ const Candidates = () => {
 };
 
 export default Candidates;
+
+
