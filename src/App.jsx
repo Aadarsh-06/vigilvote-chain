@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import Verification from "./pages/Verification";
 import VoteIntegrity from "./pages/VoteIntegrity";
 import NotFound from "./pages/NotFound";
+import ConnectivityGuard from "./components/ConnectivityGuard";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ConnectivityGuard />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />

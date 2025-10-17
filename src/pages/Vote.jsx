@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Navbar } from "@/components/Navbar";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.js";
 import { toast } from "sonner";
 import { Vote as VoteIcon, Loader2, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

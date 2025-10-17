@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Copy, Download, Shield } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client.js";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
